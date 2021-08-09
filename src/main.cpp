@@ -11,6 +11,8 @@
 #define TIMER_FAST_INTERVAL 1*104  // in microseconds, 1000 = 1Hz
 #define ANA_READ_TASK_ESP_CORE 1
 
+#define USE_DOUBLE_AMPLTIUDE
+
 #define PWM_FREQ 50000
 
 hw_timer_t * g_FastTimerhandle = NULL;
@@ -46,9 +48,12 @@ const int8_t g_sigcode[] = {1, 1, -1, -1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, -1,
 //const int8_t g_sigcode[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0};  //motor driver friendly signal
 //const int8_t g_sigcode[] = {1, 1, 1, 0, 0, 0, -1, -1, -1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1, -1, -1, 0, 0, 0};
 //const int8_t g_sigcode[] = {1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1};
+//const int8_t g_sigcode[] = {1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
 //const int8_t g_sigcode[] = {1, 1, 1, 1, 0, 0, 0, 0, -1, -1, -1, -1, 1, 1, 1, 1, 0, 0, 0, 0, -1, -1, -1, -1};
 //const int8_t g_sigcode[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 //const int8_t g_sigcode[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+
+// const int8_t g_sigcode[] = {1, 1, 1, -1, -1, -1, 1, 1, -1, 1, 1, 1, -1, 1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1}; // pseudonoise5_nrz
 
 volatile boolean g_enableSender = true;
 volatile int g_SentStep = 0;
@@ -192,7 +197,7 @@ void InitQueue(void)
 {
     // Fast timer queue
 
-    /* Create a queue capable of containing 10 bytes */
+    /* Create a queue capable of containing bytes (used as booleans) */
     g_FastTimerQueue = xQueueCreate( TIMER_FAST_QUEUE_LEN, sizeof(byte) );
     if( g_FastTimerQueue == NULL )
     {
